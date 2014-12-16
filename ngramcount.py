@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 
+def tokens(str1):
+    import re
+    return re.findall('[a-zA-Z]+', str1)
+
 def ngrams(words):
     for length in range(1, 5 + 1):
         for ngram in zip(*(words[i:] for i in range(length))):
@@ -15,7 +19,8 @@ def mapper(files):
     ngram_counter = Counter()
     for line in fileinput.input(files):
         line = line.decode('iso-8859-1')
-        words = word_tokenize(line.lower())
+        words = tokens(line.lower())
+        # words = word_tokenize(line.lower())
         ngram_counter.update(ngrams(words))
 
     for ngram, count in ngram_counter.iteritems():
@@ -38,7 +43,8 @@ def reducer(files):
 
     for ngram, lines in groupby(fileinput.input(files), key=line_to_ngram):
         count = sum(imap(line_to_count, lines))
-        print (ngram + u'\t' + unicode(count)).encode('utf-8')
+        if count>=3:
+            print (ngram + u'\t' + unicode(count)).encode('utf-8')
 
 
 if __name__ == '__main__':
